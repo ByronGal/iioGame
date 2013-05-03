@@ -100,7 +100,7 @@ PoxBoxV2 = function(io){
 	}
 
 	function moveKeyPressedReleaseTest(){
-		if(upPushed||downPushed||leftPushed||rightPushed||spacePushed)
+		if(upPushed||downPushed||leftPushed||rightPushed)
 			return true;
 		else
 			return false;
