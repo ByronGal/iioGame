@@ -1,0 +1,40 @@
+<!doctype html>
+
+<html>
+
+	<head>
+
+		<!-- Center Canvas  -->
+		<style type="text/css">	
+			#canvas-container {
+			   width: 100%;
+			   height: 100%;
+			   text-align:center;
+			}
+
+			canvas {
+			   display: inline;
+			}
+			
+		</style>
+
+		<!-- Ready scripts  -->
+		<script type="text/javascript" src="iioEngine-1.2.1.js"></script>
+		<script type="text/javascript" src="iioDebugger-1.0.js"></script>
+		<script type="text/javascript" src="PoxBoxV2.io.js"></script>
+
+	</head>
+
+	<body>
+
+		<div id="canvas-container">
+
+			<!-- Make Canvas  -->
+			<canvas id="canvas1" width="645px" height="800px"></canvas>
+			<script type="text/javascript"> iio.start(PoxBoxV2,'canvas1') </script>
+
+		</div>
+
+	</body>
+
+</html>
