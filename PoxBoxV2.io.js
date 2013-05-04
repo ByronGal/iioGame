@@ -4,10 +4,11 @@ PoxBoxV2 = function(io){
 	io.setBGColor('#424242');
 
 	//turns on Debug Console
-	io.activateDebugger();
+	///io.activateDebugger();
 
 	/*	BUG-REPORT
 	1. Drag function in the positive directions is a bit janky
+	2. approaching border at diagaonal allows movekeypressed to break boundary function
 	*/
 	
 	//Variable declartion
@@ -20,7 +21,8 @@ PoxBoxV2 = function(io){
 
 	var dragForce = .5; //Rate of velocity decrement - for now make sure it divides int speedinc evenly
 
-	var boundary = -62; //Border offset
+	var boundary = -25; //Border offset
+	var boundaryRepel = .5;
 
 	var spacePushed = false; //Input switches
 	var leftPushed = false;
@@ -38,7 +40,31 @@ PoxBoxV2 = function(io){
 		.enableKinematics()
 		.setVel(boxX,boxY)
 		.setFillStyle('white')
-		.setStrokeStyle('');
+		.setStrokeStyle('')
+		.setBound('bottom',
+			io.canvas.height+boundary,
+			function(playerBox){
+				boxY = -boundaryRepel;
+				return true;
+			})
+		.setBound('top',
+			-boundary,
+			function(playerBox){
+				boxY = boundaryRepel;
+				return true;
+			})
+		.setBound('right',
+			io.canvas.width+boundary,
+			function(playerBox){
+				boxX = -boundaryRepel;
+				return true;
+			})
+		.setBound('left',
+			-boundary,
+			function(playerBox){
+				boxX = boundaryRepel;
+				return true;
+			});;
 
 	//Add box to io manager
 	io.addToGroup('player', playerBox);
@@ -108,6 +134,29 @@ PoxBoxV2 = function(io){
 		io.addToGroup('UI', bottomBorder , 10, 1);
 		io.draw(1) //draws ui canvas
 	}
+/*
+		function drawUI(){	//draws ui onto second canvas
+		//create new canvas in forground
+		io.addCanvas(10)
+		var leftBorder = new iio.ioRect(boundary/2, io.canvas.height/2, boundary,io.canvas.height) //left side bar
+			.setFillStyle('black')
+			.setStrokeStyle('');
+		io.addToGroup('UI', leftBorder , 10, 1);
+		var rightBorder = new iio.ioRect(io.canvas.width-boundary/2, io.canvas.height/2, boundary,io.canvas.height) //right side bar
+			.setFillStyle('black')
+			.setStrokeStyle('');
+		io.addToGroup('UI', rightBorder , 10, 1);
+		var topBorder = new iio.ioRect(io.canvas.width/2, boundary/2, io.canvas.width,boundary) //top side bar
+			.setFillStyle('black')
+			.setStrokeStyle('');
+		io.addToGroup('UI', topBorder , 10, 1);
+		var bottomBorder = new iio.ioRect(io.canvas.width/2, io.canvas.height-boundary/2, io.canvas.width,boundary) //bottom side bar
+			.setFillStyle('black')
+			.setStrokeStyle('');
+		io.addToGroup('UI', bottomBorder , 10, 1);
+		io.draw(1) //draws ui canvas
+	}
+*/
 
 	//test if action bound to space can fire
 	function canSpaceAction(){
