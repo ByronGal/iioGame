@@ -37,53 +37,77 @@ PoxBoxV2 = function(io){
 	var playerBox = new iio.ioRect(io.canvas.center.x,io.canvas.center.y, 25)
 		.enableKinematics()
 		.setVel(boxX,boxY)
-		.setFillStyle('black')
+		.setFillStyle('white')
 		.setStrokeStyle('');
 
 	//Add box to io manager
 	io.addToGroup('player', playerBox);
 
 	//debug text creation
-	var debugText1 = new iio.ioText('variable debug',500,15)	//boxX debug text
+	var debugText1 = new iio.ioText('variable debug',500,45)	//boxX debug text
 	    .setStrokeStyle('blue');
 	    debugText1.font ='30px';
 	io.addToGroup('text', debugText1);
-	var debugText2 = new iio.ioText('variable debug',500,35)	//boxY debug text
+	var debugText2 = new iio.ioText('variable debug',500,65)	//boxY debug text
 	    .setStrokeStyle('blue');
 	    debugText2.font ='30px';
 	io.addToGroup('text', debugText2);
-	var debugText3 = new iio.ioText('variable debug',500,55)	//space debug text
+	var debugText3 = new iio.ioText('variable debug',500,85)	//space debug text
 	    .setStrokeStyle('red');
 	    debugText3.font ='30px';
 	io.addToGroup('text', debugText3);
-	var debugText4 = new iio.ioText('variable debug',500,75)	//left debug text
+	var debugText4 = new iio.ioText('variable debug',500,105)	//left debug text
 	    .setStrokeStyle('red');
 	    debugText4.font ='30px';
 	io.addToGroup('text', debugText4); 
-	var debugText5 = new iio.ioText('variable debug',500,95)	//down debug text
+	var debugText5 = new iio.ioText('variable debug',500,125)	//down debug text
 	    .setStrokeStyle('red');
 	    debugText5.font ='30px';
 	io.addToGroup('text', debugText5);
-	var debugText6 = new iio.ioText('variable debug',500,115)	//right debug text
+	var debugText6 = new iio.ioText('variable debug',500,145)	//right debug text
 	    .setStrokeStyle('red');
 	    debugText6.font ='30px';
 	io.addToGroup('text', debugText6);
-	var debugText7 = new iio.ioText('variable debug',500,135)	//up debug text
+	var debugText7 = new iio.ioText('variable debug',500,165)	//up debug text
 	    .setStrokeStyle('red');
 	    debugText7.font ='30px';;
 	io.addToGroup('text', debugText7);
-	var debugText8 = new iio.ioText('variable debug',500,155)	//space tick debug text
+	var debugText8 = new iio.ioText('variable debug',500,185)	//space tick debug text
 	    .setStrokeStyle('green');
 	    debugText8.font ='30px';
 	io.addToGroup('text', debugText8);
-	var debugText9 = new iio.ioText('variable debug',500,175)	//can push space debug text
+	var debugText9 = new iio.ioText('variable debug',500,205)	//can push space debug text
 	    .setStrokeStyle('red');
 	    debugText9.font ='30px';
 	io.addToGroup('text', debugText9);
-	var debugText10 = new iio.ioText('variable debug',500,195)	//can move test debug text
+	var debugText10 = new iio.ioText('variable debug',500,225)	//can move test debug text
 	    .setStrokeStyle('red');
 	    debugText9.font ='30px';
 	io.addToGroup('text', debugText10);
+
+	drawUI();
+
+	function drawUI(){	//draws ui onto second canvas
+		//create new canvas in forground
+		io.addCanvas(10)
+		var leftBorder = new iio.ioRect(25/2, io.canvas.height/2, 25,io.canvas.height) //left side bar
+			.setFillStyle('black')
+			.setStrokeStyle('');
+		io.addToGroup('UI', leftBorder , 10, 1);
+		var rightBorder = new iio.ioRect(io.canvas.width-25/2, io.canvas.height/2, 25,io.canvas.height) //right side bar
+			.setFillStyle('black')
+			.setStrokeStyle('');
+		io.addToGroup('UI', rightBorder , 10, 1);
+		var topBorder = new iio.ioRect(io.canvas.width/2, 25/2, io.canvas.width,25) //top side bar
+			.setFillStyle('black')
+			.setStrokeStyle('');
+		io.addToGroup('UI', topBorder , 10, 1);
+		var bottomBorder = new iio.ioRect(io.canvas.width/2, io.canvas.height-25/2, io.canvas.width,25) //bottom side bar
+			.setFillStyle('black')
+			.setStrokeStyle('');
+		io.addToGroup('UI', bottomBorder , 10, 1);
+		io.draw(1) //draws ui canvas
+	}
 
 	//test if action bound to space can fire
 	function canSpaceAction(){
@@ -105,6 +129,9 @@ PoxBoxV2 = function(io){
 		else
 			return false;
 	}
+
+	//initial draw
+	io.draw();
 
 	//game loop
 	function gameLoop(){
