@@ -21,8 +21,9 @@ PoxBoxV2 = function(io){
 
 	var dragForce = .5; //Rate of velocity decrement - for now make sure it divides int speedinc evenly
 
-	var boundary = -25; //Border offset
-	var boundaryRepel = .5;
+	var boundary = -25; //Border offset	
+
+	var boundaryRepel = 5;
 
 	var spacePushed = false; //Input switches
 	var leftPushed = false;
@@ -30,10 +31,16 @@ PoxBoxV2 = function(io){
 	var rightPushed = false;
 	var upPushed = false;
 
-	var moveKeyPressed = false; //Makes the drag only active when a key is not pressed
+	var moveKeyXPressed = false; //Makes the drag on the X only active when a key is not pressed
+	var moveKeyYPressed = false; //Makes the drag on the Y only active when a key is not pressed
 
 	var spaceTick = 15; //Counter for canSpaceAction function
 	var spaceTimer = 120; //Length of canSpaceAction function
+
+	//Reference variables
+	var boundars = { b : -25};
+	var border = boundars;
+
 
 	//Spawn box playerBox
 	var playerBox = new iio.ioRect(io.canvas.center.x,io.canvas.center.y, 25)
@@ -46,7 +53,7 @@ PoxBoxV2 = function(io){
 			function(playerBox){
 				boxY = -boundaryRepel;
 				return true;
-			})
+			}) 
 		.setBound('top',
 			-boundary,
 			function(playerBox){
@@ -134,23 +141,25 @@ PoxBoxV2 = function(io){
 		io.addToGroup('UI', bottomBorder , 10, 1);
 		io.draw(1) //draws ui canvas
 	}
+
 /*
 		function drawUI(){	//draws ui onto second canvas
 		//create new canvas in forground
 		io.addCanvas(10)
-		var leftBorder = new iio.ioRect(boundary/2, io.canvas.height/2, boundary,io.canvas.height) //left side bar
+		alert(border.b/2)
+		var leftBorder = new iio.ioRect(border.b/2, io.canvas.height/2, border.b,io.canvas.height) //left side bar
 			.setFillStyle('black')
 			.setStrokeStyle('');
 		io.addToGroup('UI', leftBorder , 10, 1);
-		var rightBorder = new iio.ioRect(io.canvas.width-boundary/2, io.canvas.height/2, boundary,io.canvas.height) //right side bar
+		var rightBorder = new iio.ioRect(io.canvas.width-border.b/2, io.canvas.height/2, border.b,io.canvas.height) //right side bar
 			.setFillStyle('black')
 			.setStrokeStyle('');
 		io.addToGroup('UI', rightBorder , 10, 1);
-		var topBorder = new iio.ioRect(io.canvas.width/2, boundary/2, io.canvas.width,boundary) //top side bar
+		var topBorder = new iio.ioRect(io.canvas.width/2, border.b/2, io.canvas.width,border.b) //top side bar
 			.setFillStyle('black')
 			.setStrokeStyle('');
 		io.addToGroup('UI', topBorder , 10, 1);
-		var bottomBorder = new iio.ioRect(io.canvas.width/2, io.canvas.height-boundary/2, io.canvas.width,boundary) //bottom side bar
+		var bottomBorder = new iio.ioRect(io.canvas.width/2, io.canvas.height-border.b/2, io.canvas.width,border.b) //bottom side bar
 			.setFillStyle('black')
 			.setStrokeStyle('');
 		io.addToGroup('UI', bottomBorder , 10, 1);
@@ -172,8 +181,15 @@ PoxBoxV2 = function(io){
 		io.setBGColor('#'+iio.getRandomInt(0,9)+iio.getRandomInt(0,9)+iio.getRandomInt(0,9)+iio.getRandomInt(0,9)+iio.getRandomInt(0,9)+iio.getRandomInt(0,9));
 	}
 
-	function moveKeyPressedReleaseTest(){
-		if(upPushed||downPushed||leftPushed||rightPushed)
+	function moveKeyXPressedReleaseTest(){
+		if(leftPushed||rightPushed)
+			return true;
+		else 
+			return false;
+	}
+
+	function moveKeyYPressedReleaseTest(){
+		if(upPushed||downPushed)
 			return true;
 		else
 			return false;
@@ -213,13 +229,19 @@ PoxBoxV2 = function(io){
 			}
 		};
 
-		//Simulate drag
-		if(!moveKeyPressed){
-			if (boxX !=0 ||boxY != 0){
+		//Simulate drag on X
+		if(!moveKeyXPressed){
+			if (boxX !=0){
 				if(boxX<0)
 					boxX+=dragForce;
 				if(boxX>0)
 					boxX-=dragForce;
+			}
+		}
+
+		//Simulate drag on Y
+		if(!moveKeyYPressed){
+			if (boxY != 0){
 				if(boxY<0)
 					boxY+=dragForce;
 				if(boxY>0)
@@ -232,22 +254,22 @@ PoxBoxV2 = function(io){
 			 
 			if (iio.keyCodeIs('up arrow', event)||iio.keyCodeIs('w', event)){
 					upPushed = true;
-					moveKeyPressed = true;
+					moveKeyYPressed = true;
 				}
 
 			if (iio.keyCodeIs('right arrow', event)||iio.keyCodeIs('d', event)){
 					rightPushed = true;
-					moveKeyPressed = true;
+					moveKeyXPressed = true;
 			 	}
 
 			if (iio.keyCodeIs('down arrow', event)||iio.keyCodeIs('s', event)){
 					downPushed = true;
-					moveKeyPressed = true;
+					moveKeyYPressed = true;
 				}
 
 			if (iio.keyCodeIs('left arrow', event)||iio.keyCodeIs('a', event)){
 					leftPushed = true;
-					moveKeyPressed = true;
+					moveKeyXPressed = true;
 				}	
 
 			if (iio.keyCodeIs('space', event))
@@ -258,22 +280,22 @@ PoxBoxV2 = function(io){
 			 
 			if (iio.keyCodeIs('up arrow', event)||iio.keyCodeIs('w', event)){
 					upPushed = false;
-					moveKeyPressed = moveKeyPressedReleaseTest();
+					moveKeyYPressed = moveKeyYPressedReleaseTest();
 			 	}
 
 			if (iio.keyCodeIs('right arrow', event)||iio.keyCodeIs('d', event)){
 					rightPushed = false;
-					moveKeyPressed = moveKeyPressedReleaseTest();
+					moveKeyXPressed = moveKeyXPressedReleaseTest();
 			 	}
 
 			if (iio.keyCodeIs('down arrow', event)||iio.keyCodeIs('s', event)){
 					downPushed = false;
-					moveKeyPressed = moveKeyPressedReleaseTest();
+					moveKeyYPressed = moveKeyYPressedReleaseTest();
 			 	}
 
 			if (iio.keyCodeIs('left arrow', event)||iio.keyCodeIs('a', event)){
 					leftPushed = false;
-					moveKeyPressed = moveKeyPressedReleaseTest();
+					moveKeyXPressed = moveKeyXPressedReleaseTest();
 				}
 
 			if (iio.keyCodeIs('space', event))
@@ -297,7 +319,7 @@ PoxBoxV2 = function(io){
 		debugText6.text = 'rightPushed = ' + rightPushed.toString();
 		debugText7.text = 'upPushed = ' + upPushed.toString();
 		debugText8.text = 'spaceTick = ' + spaceTick.toString();
-		debugText9.text = 'moveKeyPressed = ' + moveKeyPressed.toString();
+		debugText9.text = 'moveKeyXPressed = ' + moveKeyXPressed.toString();
 	}
 
 	//Set update time in ms and call gameloop
