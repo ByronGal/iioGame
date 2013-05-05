@@ -119,7 +119,7 @@ PoxBoxV2 = function(io){
 	io.addToGroup('text', debugText10);
 
 	drawUI();
-
+/*
 	function drawUI(){	//draws ui onto second canvas
 		//create new canvas in forground
 		io.addCanvas(10)
@@ -141,8 +141,8 @@ PoxBoxV2 = function(io){
 		io.addToGroup('UI', bottomBorder , 10, 1);
 		io.draw(1) //draws ui canvas
 	}
-
-/*
+*/
+///*
 		function drawUI(){	//draws ui onto second canvas
 		//create new canvas in forground
 		io.addCanvas(10)
@@ -165,7 +165,7 @@ PoxBoxV2 = function(io){
 		io.addToGroup('UI', bottomBorder , 10, 1);
 		io.draw(1) //draws ui canvas
 	}
-*/
+//*/
 
 	//test if action bound to space can fire
 	function canSpaceAction(){
