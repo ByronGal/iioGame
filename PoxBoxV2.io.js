@@ -23,7 +23,7 @@ PoxBoxV2 = function(io){
 
 	var boundary = -25; //Border offset	
 
-	var boundaryRepel = 5;
+	var boundaryRepel = 5; //Speed  player pushed of bounda
 
 	var spacePushed = false; //Input switches
 	var leftPushed = false;
@@ -38,8 +38,7 @@ PoxBoxV2 = function(io){
 	var spaceTimer = 120; //Length of canSpaceAction function
 
 	//Reference variables
-	var boundars = { b : -25};
-	var border = boundars;
+	var UIsize = 25; //Border offset	
 
 
 	//Spawn box playerBox
@@ -119,53 +118,28 @@ PoxBoxV2 = function(io){
 	io.addToGroup('text', debugText10);
 
 	drawUI();
-/*
+
 	function drawUI(){	//draws ui onto second canvas
 		//create new canvas in forground
 		io.addCanvas(10)
-		var leftBorder = new iio.ioRect(25/2, io.canvas.height/2, 25,io.canvas.height) //left side bar
+		var leftBorder = new iio.ioRect(UIsize/2, io.canvas.height/2, UIsize,io.canvas.height) //left side bar
 			.setFillStyle('black')
 			.setStrokeStyle('');
 		io.addToGroup('UI', leftBorder , 10, 1);
-		var rightBorder = new iio.ioRect(io.canvas.width-25/2, io.canvas.height/2, 25,io.canvas.height) //right side bar
+		var rightBorder = new iio.ioRect(io.canvas.width-UIsize/2, io.canvas.height/2, UIsize,io.canvas.height) //right side bar
 			.setFillStyle('black')
 			.setStrokeStyle('');
 		io.addToGroup('UI', rightBorder , 10, 1);
-		var topBorder = new iio.ioRect(io.canvas.width/2, 25/2, io.canvas.width,25) //top side bar
+		var topBorder = new iio.ioRect(io.canvas.width/2, UIsize/2, io.canvas.width,UIsize) //top side bar
 			.setFillStyle('black')
 			.setStrokeStyle('');
 		io.addToGroup('UI', topBorder , 10, 1);
-		var bottomBorder = new iio.ioRect(io.canvas.width/2, io.canvas.height-25/2, io.canvas.width,25) //bottom side bar
+		var bottomBorder = new iio.ioRect(io.canvas.width/2, io.canvas.height-UIsize/2, io.canvas.width,UIsize) //bottom side bar
 			.setFillStyle('black')
 			.setStrokeStyle('');
 		io.addToGroup('UI', bottomBorder , 10, 1);
 		io.draw(1) //draws ui canvas
 	}
-*/
-///*
-		function drawUI(){	//draws ui onto second canvas
-		//create new canvas in forground
-		io.addCanvas(10)
-		alert(border.b/2)
-		var leftBorder = new iio.ioRect(border.b/2, io.canvas.height/2, border.b,io.canvas.height) //left side bar
-			.setFillStyle('black')
-			.setStrokeStyle('');
-		io.addToGroup('UI', leftBorder , 10, 1);
-		var rightBorder = new iio.ioRect(io.canvas.width-border.b/2, io.canvas.height/2, border.b,io.canvas.height) //right side bar
-			.setFillStyle('black')
-			.setStrokeStyle('');
-		io.addToGroup('UI', rightBorder , 10, 1);
-		var topBorder = new iio.ioRect(io.canvas.width/2, border.b/2, io.canvas.width,border.b) //top side bar
-			.setFillStyle('black')
-			.setStrokeStyle('');
-		io.addToGroup('UI', topBorder , 10, 1);
-		var bottomBorder = new iio.ioRect(io.canvas.width/2, io.canvas.height-border.b/2, io.canvas.width,border.b) //bottom side bar
-			.setFillStyle('black')
-			.setStrokeStyle('');
-		io.addToGroup('UI', bottomBorder , 10, 1);
-		io.draw(1) //draws ui canvas
-	}
-//*/
 
 	//test if action bound to space can fire
 	function canSpaceAction(){
