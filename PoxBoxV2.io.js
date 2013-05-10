@@ -15,17 +15,17 @@ PoxBoxV2 = function(io){
 	var boxX = 0; //Box x & y velocities
 	var boxY = 0; 
 
-	var PlayerSize = 10;
+	var PlayerSize = 10; //Size of square to represent player
 
-	var topSpeed = 6; //Top speed of Player
+	var topSpeed = 10; //Top speed of Player
 
-	var speedInc = .5; //Rate velocity increments
+	var speedInc = 1; //Rate velocity increments
 
-	var dragForce = .5; //Rate of velocity decrement - for now make sure it divides int speedinc evenly
+	var dragForce = 1; //Rate of velocity decrement - for now make sure it divides int speedinc evenly
 
 	var boundary = -10; //Border offset	
 
-	var boundaryRepel = 5; //Speed player pushed off of bounds
+	var boundaryRepel = 1; //Speed player pushed off of bounds
 
 	var spacePushed = false; //Input switches
 	var leftPushed = false;
@@ -44,10 +44,18 @@ PoxBoxV2 = function(io){
 	var laserImg = new Image();	//laser image source
 	laserImg.src = 'png/laserRed.png';
 
-	var spreadSize = 25;	//vars for bullet spreading
+	var spreadSize = 15;	//vars for bullet spreading
 	var shotInvertFlag = true;
 	var spreadInc = 0;
 	var spreadSpeed = 5;
+	
+	var npcSpawnSpeed = 3;	//ticks needed to spawn new NPC
+	var npcSpawnTimer = 0;
+	var npcTotalNum = 25;
+	var npcCurrent = 0;
+	
+
+	
 
 	//Spawn box playerBox
 	var playerBox = new iio.ioRect(io.canvas.center.x,io.canvas.center.y, PlayerSize)
@@ -80,8 +88,32 @@ PoxBoxV2 = function(io){
 				return true;
 			});;
 
+	//check to see if NPC Boxes can spawn
+	function npcSpawnCheck(){
+		if(npcSpawnTimer>=npcSpawnSpeed&&npcCurrent<npcTotalNum){
+			npcCreate();
+			npcSpawnTimer = 0;
+		}
+	}
+	
+	//create npc Boxes
+	function npcCreate(){
+		io.addToGroup('npcs', new iio.ioRect (randomNumberInWidth(),randomNumberInHeight(), 35),-5)
+			.setFillStyle('white')
+			.setStrokeStyle('');
+		npcCurrent++;
+	}
+
 	//Add box to io manager
 	io.addToGroup('player', playerBox, 1);
+
+	function randomNumberInWidth(){
+		return iio.getRandomNum(10,io.canvas.width-10); //return a a valid x value inside the borders
+	}
+	
+	function randomNumberInHeight(){
+		return iio.getRandomNum(10,io.canvas.height-10); //return a valid y value inside the borders
+	}
 
 	//debug text creation
 	var debugText1 = new iio.ioText('variable debug',500,45)	//boxX debug text
@@ -130,7 +162,7 @@ PoxBoxV2 = function(io){
 	io.addToGroup('text', debugText11);
 
 	drawUI();
-
+	//draws borders
 	function drawUI(){	//draws ui onto second canvas
 		//create new canvas in forground
 		io.addCanvas(10)
@@ -167,6 +199,7 @@ PoxBoxV2 = function(io){
 		io.setBGColor('#'+iio.getRandomInt(0,9)+iio.getRandomInt(0,9)+iio.getRandomInt(0,9)+iio.getRandomInt(0,9)+iio.getRandomInt(0,9)+iio.getRandomInt(0,9));
 	}
 
+	//takes ship position and makes bullet position
 	function createBullletPos(x,y){
 		var shotCenter = x;
 		var shotY = y; 
@@ -184,12 +217,22 @@ PoxBoxV2 = function(io){
 		}
 	}
 
-	fireBullet = function(x,y){	//takes the x,y from createBullletPos and makes a shot
-		 io.addToGroup('lasers', new iio.ioRect(x,y),1)
-			.createWithImage(laserImg)
-			.enableKinematics()
-			.setBound('top',0)
-			.setVel(0,boxY-6);		
+	//takes the x,y from createBullletPos and makes a shot
+	fireBullet = function(x,y){
+		  if (boxY<0){
+			  io.addToGroup('lasers', new iio.ioRect(x,y),1)
+				.createWithImage(laserImg)
+				.enableKinematics()
+				.setBound('top',0)
+				.setVel(0,boxY-6);	
+		  }
+		 else{
+			 io.addToGroup('lasers', new iio.ioRect(x,y),1)
+				.createWithImage(laserImg)
+				.enableKinematics()
+				.setBound('top',0)
+				.setVel(0,-6);	
+		 }
 	}
 
 	//test to see if drag is needed on x axis
@@ -209,7 +252,7 @@ PoxBoxV2 = function(io){
 	}
 
 	//initial draw
-	io.draw();
+	io.draw(0);
 
 	//game loop
 	function gameLoop(){
@@ -242,7 +285,10 @@ PoxBoxV2 = function(io){
 				spaceTick = 0;
 			}
 		};
-
+		
+		//npc creation check
+		npcSpawnCheck();
+		
 		//Simulate drag on X
 		if(!moveKeyXPressed){
 			if (boxX !=0){
@@ -263,7 +309,7 @@ PoxBoxV2 = function(io){
 			}
 		}
 
-		//Key Listener for arrows WASD and space
+		//Key Listener for arrows, WASD, and space
 		window.addEventListener('keydown', function(event){
 			 
 			if (iio.keyCodeIs('up arrow', event)||iio.keyCodeIs('w', event)){
@@ -323,8 +369,10 @@ PoxBoxV2 = function(io){
 	function timerIncrement(){
 		if(spaceTick <= spaceTimer)
 			spaceTick++;
+		npcSpawnTimer++;
 	}
 
+	//update debug pane
 	function debugUpdate(){
 		debugText1.text = 'boxX = ' + boxX.toString();
 		debugText2.text = 'boxY = ' + boxY.toString();
@@ -336,7 +384,7 @@ PoxBoxV2 = function(io){
 		debugText8.text = 'spaceTick = ' + spaceTick.toString();
 		debugText9.text = 'moveKeyXPressed = ' + moveKeyXPressed.toString();
 		debugText10.text = 'spreadInc = ' + spreadInc.toString();
-		debugText11.text = 'shotInvertFlag = ' + shotInvertFlag.toString();
+		debugText11.text = 'shotInvertFlag = ' + npcSpawnTimer.toString();
 	}
 
 	//Set update time in ms and call gameloop
