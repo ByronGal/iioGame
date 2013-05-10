@@ -17,7 +17,7 @@ PoxBoxV2 = function(io){
 
 	var PlayerSize = 10; //Size of square to represent player
 
-	var topSpeed = 10; //Top speed of Player
+	var topSpeed = 3; //Top speed of Player
 
 	var speedInc = 1; //Rate velocity increments
 
@@ -54,8 +54,8 @@ PoxBoxV2 = function(io){
 	var npcTotalNum = 25;
 	var npcCurrent = 0;
 	
-
-	
+	var playerScore = 0;
+	var timeLeft = 600;
 
 	//Spawn box playerBox
 	var playerBox = new iio.ioRect(io.canvas.center.x,io.canvas.center.y, PlayerSize)
@@ -98,7 +98,7 @@ PoxBoxV2 = function(io){
 	
 	//create npc Boxes
 	function npcCreate(){
-		io.addToGroup('npcs', new iio.ioRect (randomNumberInWidth(),randomNumberInHeight(), 35),-5)
+		var npc =io.addToGroup('npcs', new iio.ioRect (randomNumberInWidth(),randomNumberInHeight(), 35),-5)
 			.setFillStyle('white')
 			.setStrokeStyle('');
 		npcCurrent++;
@@ -160,6 +160,14 @@ PoxBoxV2 = function(io){
 	    .setStrokeStyle('red');
 	    debugText9.font ='30px';
 	io.addToGroup('text', debugText11);
+	var scoreText = new iio.ioText('Score =  ' + playerScore , io.canvas.width/2 , io.canvas.height - (UIsize*1.5))	//player score display
+	    .setStrokeStyle('white');
+	    scoreText.font ='30px';
+	io.addToGroup('text', scoreText);
+	var timeText = new iio.ioText('Time Left = ' + timeLeft , io.canvas.width/2 , 10+(UIsize*1.5))	//time left in game
+	    .setStrokeStyle('white');
+	    timeText.font ='30px';
+	io.addToGroup('text', timeText);
 
 	drawUI();
 	//draws borders
@@ -220,14 +228,14 @@ PoxBoxV2 = function(io){
 	//takes the x,y from createBullletPos and makes a shot
 	fireBullet = function(x,y){
 		  if (boxY<0){
-			  io.addToGroup('lasers', new iio.ioRect(x,y),1)
+			 var shot = io.addToGroup('shots', new iio.ioRect(x,y),1)
 				.createWithImage(laserImg)
 				.enableKinematics()
 				.setBound('top',0)
 				.setVel(0,boxY-6);	
 		  }
 		 else{
-			 io.addToGroup('lasers', new iio.ioRect(x,y),1)
+			 shot = io.addToGroup('shots', new iio.ioRect(x,y),1)
 				.createWithImage(laserImg)
 				.enableKinematics()
 				.setBound('top',0)
@@ -251,8 +259,17 @@ PoxBoxV2 = function(io){
 			return false;
 	}
 
-	//initial draw
-	io.draw(0);
+
+	io.addGroup('shots');
+	io.addGroup('npcs');
+	io.setCollisionCallback('shots', 'npcs', function(shot, npc){
+		io.rmvFromGroup(shot, 'shots');
+		io.rmvFromGroup(npc, 'npcs');
+		npcCurrent--;
+		playerScore++;
+		timeLeft += 5;
+	});
+
 
 	//game loop
 	function gameLoop(){
@@ -371,6 +388,13 @@ PoxBoxV2 = function(io){
 			spaceTick++;
 		npcSpawnTimer++;
 	}
+	function gameTime(){
+		if (timeLeft== 0)
+			return;
+			//endGame()
+		else
+			timeLeft --;
+	}
 
 	//update debug pane
 	function debugUpdate(){
@@ -385,13 +409,17 @@ PoxBoxV2 = function(io){
 		debugText9.text = 'moveKeyXPressed = ' + moveKeyXPressed.toString();
 		debugText10.text = 'spreadInc = ' + spreadInc.toString();
 		debugText11.text = 'shotInvertFlag = ' + npcSpawnTimer.toString();
+		scoreText.text = 'Score = ' + playerScore.toString();
+		timeText.text = 'Time Left' + (timeLeft/60).toString();
 	}
 
 	//Set update time in ms and call gameloop
 	io.setFramerate(60,function(){
+		io.draw();
 		gameLoop();
 		timerIncrement();
 		debugUpdate();
+		gameTime();
 	}
 
 )};
